@@ -1,5 +1,6 @@
 package com.krinitsky.todolist.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ public class Task extends Identify {
 
     @NotNull
     private String text;
-    @NotNull
+
+    @JsonProperty("isPerformed")
     private boolean isPerformed;
 }
