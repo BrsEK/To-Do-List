@@ -32,7 +32,6 @@ public class TaskService {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-
     public ResponseEntity<Task> getTask(Long id) {
         Optional<Task> optionalTask = taskRepository.findById(id);
         return optionalTask.map(task -> new ResponseEntity<>(task, HttpStatus.OK))
@@ -51,7 +50,6 @@ public class TaskService {
         return new ResponseEntity<>(updatedTask, HttpStatus.NO_CONTENT);
     }
 
-
     public ResponseEntity<Task> removeTask(Long id) {
         if (taskRepository.findById(id).isPresent()) {
             taskRepository.deleteById(id);
@@ -59,7 +57,6 @@ public class TaskService {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
 
     public ResponseEntity<List<Task>> getAllTasks() {
         List<Task> tasks = taskRepository.findAll();
@@ -69,7 +66,11 @@ public class TaskService {
         return new ResponseEntity<>(tasks, HttpStatus.OK);
     }
 
-
+    /**
+     * Method finds tasks by their status
+     *
+     * @param status status of task (task completed or not completed)
+     */
     public ResponseEntity<List<Task>> getTaskByStatus(boolean status) {
         List<Task> tasks = taskRepository.findByIsCompleted(status);
         if (tasks.isEmpty()) {
