@@ -10,42 +10,55 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css">
-    <link rel="stylesheet" href="/css/style.css" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="/css/style.css" th:href="@{/css/style.css}" />
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
 </head>
 
 <body>
-<!-- Start App -->
-<div id="app">
-    <div class="header">
-        <div class="container">
-            <div class="logo">ToDo List</div>
-            <div class="form">
-                <input type="text" v-bind:value="valueInput" v-on:input="handleInput" v-on:keypress.enter="addTask">
-                <button class="btn" v-on:click="addTask">Add a new task</button>
+    <!-- Start App -->
+    <div id="app">
+        <div class="header">
+            <div class="container">
+                <div class="logo">ToDo List</div>
+                <div class="form">
+                    <input type="text" v-bind:value="valueInput" v-on:input="handleInput" v-on:keypress.enter="addTask">
+                    <button class="btn" v-on:click="addTask">Add a new task</button>
+                </div>
             </div>
         </div>
+        <div class="container">
+            <h2>
+                <span>To Do</span>
+                <span class="mask-num">{{ tasks.length }}</span>
+            </h2>
+            <ul class="mask-list">
+                <li v-for="(mask, index) in tasks" :key="mask.id">
+                    <div>
+                        <input type="checkbox" v-on:change="doCheck('need', mask, index)" />
+                        <span>{{ mask.text }}</span>
+                    </div>
+                    <button class="btn-remove" v-on:click="removeTask(mask, index, 'need')">Remove</button>
+                </li>
+            </ul>
+            <h2>
+                <span>Done</span>
+                <span class="mask-num">{{ completedTasks.length }}</span>
+            </h2>
+            <ul class="mask-list complete-list">
+                <li v-for="(mask, index) in completedTasks" :key="mask.id">
+                    <div>
+                        <input type="checkbox" v-on:change="doCheck('complete', mask, index)" checked>
+                        <span>{{ mask.text }}</span>
+                    </div>
+                    <button class="btn-remove" v-on:click="removeTask(mask, index, 'complete')">Remove</button>
+                </li>
+            </ul>
+        </div>
+        <!-- End App -->
+        <script src="https://unpkg.com/vue@next"></script>
+        <script src="../js/app.js"></script>
     </div>
-    <div class="container">
-        <h2>
-            <span>To Do</span>
-            <span class="mask-num">{{ needDoList.length }}</span>
-        </h2>
-        <ul class="mask-list">
-            <li v-for="(mask, index) in tasks" :key="mask.id">
-                <div>
-                    <input type="checkbox"/>
-                    <span>{{ mask.text }}</span>
-                </div>
-                <button class="btn-remove">Remove</button>
-            </li>
-        </ul>
-    </div>
-    <!-- End App -->
-    <script src="https://unpkg.com/vue@next"></script>
-    <script src="../js/app.js"></script>
-</div>
 </body>
 
 
