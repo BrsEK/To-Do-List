@@ -46,7 +46,7 @@ public class TaskService {
         }
         Task updatedTask = optionalTask.get();
         updatedTask.setText(task.getText());
-        updatedTask.setPerformed(task.isPerformed());
+        updatedTask.setCompleted(task.isCompleted());
         taskRepository.save(updatedTask);
         return new ResponseEntity<>(updatedTask, HttpStatus.NO_CONTENT);
     }
@@ -63,6 +63,15 @@ public class TaskService {
 
     public ResponseEntity<List<Task>> getAllTasks() {
         List<Task> tasks = taskRepository.findAll();
+        if (tasks.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(tasks, HttpStatus.OK);
+    }
+
+
+    public ResponseEntity<List<Task>> getTaskByStatus(boolean status) {
+        List<Task> tasks = taskRepository.findByIsCompleted(status);
         if (tasks.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

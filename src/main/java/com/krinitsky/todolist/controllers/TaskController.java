@@ -54,4 +54,9 @@ public class TaskController {
         return taskService.getAllTasks();
     }
 
+    @GetMapping("byStatus/")
+    public ResponseEntity<List<Task>>getTaskByStatus(@RequestParam("status") boolean status){
+        return taskService.getTaskByStatus(status);
+    }
+
 }
