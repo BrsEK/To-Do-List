@@ -22,8 +22,8 @@
         <div class="container">
             <div class="logo">ToDo List</div>
             <div class="form">
-                <input type="text">
-                <button class="btn">Add a new task</button>
+                <input type="text" v-bind:value="valueInput" v-on:input="handleInput" v-on:keypress.enter="addTask">
+                <button class="btn" v-on:click="addTask">Add a new task</button>
             </div>
         </div>
     </div>
