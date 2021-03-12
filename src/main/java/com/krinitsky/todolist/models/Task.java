@@ -20,5 +20,5 @@ public class Task extends Identify {
     private String text;
 
     @JsonProperty("isPerformed")
-    private boolean isPerformed;
+    private boolean isCompleted;
 }
