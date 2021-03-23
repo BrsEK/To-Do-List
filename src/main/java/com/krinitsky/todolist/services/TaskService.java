@@ -1,5 +1,6 @@
 package com.krinitsky.todolist.services;
 
+import com.krinitsky.todolist.exceptions.TaskNotFound;
 import com.krinitsky.todolist.models.Task;
 import com.krinitsky.todolist.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import java.util.Optional;
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private static final String TASK_NOT_FOUND = "Task not found";
 
 
     @Autowired
@@ -23,47 +25,37 @@ public class TaskService {
     }
 
 
-    public ResponseEntity<Task> saveTask(Task task) {
+    public boolean saveTask(Task task) {
         Optional<Task> optionalTask = taskRepository.findByText(task.getText());
         if (optionalTask.isEmpty()) {
             taskRepository.save(task);
-            return new ResponseEntity<>(task, HttpStatus.CREATED);
+            return true;
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return false;
     }
 
-    public ResponseEntity<Task> getTask(Long id) {
+    public Task getTask(Long id) throws TaskNotFound {
         Optional<Task> optionalTask = taskRepository.findById(id);
-        return optionalTask.map(task -> new ResponseEntity<>(task, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return taskRepository.findById(id).orElseThrow(() -> new TaskNotFound(TASK_NOT_FOUND));
     }
 
-    public ResponseEntity<Task> updateTask(Long id, Task task) {
-        Optional<Task> optionalTask = taskRepository.findById(id);
-        if (optionalTask.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        Task updatedTask = optionalTask.get();
+    public Task updateTask(Long id, Task task) throws TaskNotFound {
+        Task updatedTask = taskRepository.findById(id).orElseThrow(() -> new TaskNotFound(TASK_NOT_FOUND));
         updatedTask.setText(task.getText());
         updatedTask.setCompleted(task.isCompleted());
         taskRepository.save(updatedTask);
-        return new ResponseEntity<>(updatedTask, HttpStatus.NO_CONTENT);
+        return task;
     }
 
-    public ResponseEntity<Task> removeTask(Long id) {
-        if (taskRepository.findById(id).isPresent()) {
+    public Task removeTask(Long id) throws TaskNotFound {
+        return taskRepository.findById(id).map((task) -> {
             taskRepository.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return task;
+        }).orElseThrow(() -> new TaskNotFound(TASK_NOT_FOUND));
     }
 
-    public ResponseEntity<List<Task>> getAllTasks() {
-        List<Task> tasks = taskRepository.findAll();
-        if (tasks.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(tasks, HttpStatus.OK);
+    public List<Task> getAllTasks() {
+        return taskRepository.findAll();
     }
 
     /**
@@ -71,11 +63,11 @@ public class TaskService {
      *
      * @param status status of task (task completed or not completed)
      */
-    public ResponseEntity<List<Task>> getTaskByStatus(boolean status) {
+    public List<Task> getTaskByStatus(boolean status) throws TaskNotFound {
         List<Task> tasks = taskRepository.findByIsCompleted(status);
         if (tasks.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new TaskNotFound(TASK_NOT_FOUND);
         }
-        return new ResponseEntity<>(tasks, HttpStatus.OK);
+        return tasks;
     }
 }
